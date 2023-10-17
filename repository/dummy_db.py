@@ -1,8 +1,13 @@
+import bcrypt
 from model.user import User
 
-test_user = User(email="tester@gmail.com", password="1234")
+
+password = "1234"
+hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+test_user = User(email="tester@gmail.com", password=hashed_password.decode('utf-8'))
 users = []
 users.append(test_user)
+print("TEST USER PASSWORD: ", test_user.password)
 
 async def get_users():
     print(type(users))
