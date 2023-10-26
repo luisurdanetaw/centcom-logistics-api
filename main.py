@@ -47,10 +47,6 @@ def read_root():
     cursor.execute(query)
     for row in cursor.fetchall():
         print(row)
-
-    if connection.is_connected():
-        cursor.close()
-        connection.close()
     return {"message": "CENTCOM Logistics API"}
 
 app.include_router(user_controller.router, prefix="/user")
