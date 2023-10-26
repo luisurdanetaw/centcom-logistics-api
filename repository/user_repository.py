@@ -32,15 +32,16 @@ async def find_facility_repository(name: str = ""):
         raise HTTPException(status_code=500, detail=str(e))
 
 async def getFacilityInventory(facility_id: int):
-    connection = await create_db_connection()
-    with connection.cursor(dictionary=True) as cursor:
-        # Pass the parameter as a tuple with a single element
-        cursor.execute("SELECT * FROM inventory WHERE facility_id = %d", (facility_id,))
-        inventory = cursor.fetchone()
-        if inventory is None:
-            raise HTTPException(status_code=404, detail="Facility not found")
+    try:
+        connection = await create_db_connection()
+        with connection.cursor(dictionary=True) as cursor:
+            # Pass the parameter as a tuple with a single element
+            cursor.execute("SELECT * FROM inventory WHERE facility_id = %d", (facility_id,))
+            inventory = cursor.fetchone()
+            if inventory is None:
+                raise HTTPException(status_code=404, detail="Facility not found")
 
-        connection.close()
-        return inventory
+            connection.close()
+            return inventory
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

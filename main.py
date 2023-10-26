@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from controller import user_controller
 import mysql.connector

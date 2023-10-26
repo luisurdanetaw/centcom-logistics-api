@@ -1,7 +1,9 @@
+from model.user import User
 import re
-import mysql.connector
+from repository.dummy_db import get_users, create_user, find_facility_repo
 import bcrypt
 from model.user import User
+from repository.user_repository import find_facility_repository
 
 # Create a function to register a user
 def register_user(user: User):
@@ -48,7 +50,9 @@ def login_user(user: User):
         print("Error logging in:", e)
         return False
 
-
+async def find_facility_service(name:str = ""):
+    return await find_facility_repository(name)
+    #return await find_facility_repo(name)
 
 # from model.user import User
 # import re

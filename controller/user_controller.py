@@ -1,7 +1,9 @@
+# user_controller.py
 from fastapi import APIRouter
 from pydantic import BaseModel
 from model.user import User
-from service.user_service import register_user, login_user
+from service.user_service import register_user, login_user, find_facility_service
+from repository.dummy_db import get_users
 from fastapi.responses import JSONResponse
 import mysql.connector
 
@@ -23,7 +25,6 @@ router = APIRouter()
 
 # Define the User Pydantic model
 class UserCreate(BaseModel):
-    id: int = 0
     first_name: str = "NULL"
     last_name: str = "NULL"
     position: str = "NULL"
@@ -42,7 +43,7 @@ async def create_user(user: UserCreate):
         if connection.is_connected():
             cursor = connection.cursor()
             # Insert the user into the database
-            query = "INSERT INTO user (first_name, last_name, position, email, phone, password) VALUES (%s, %s, %s, %s, %s, %s)"
+            query = "INSERT INTO users (first_name, last_name, position, email, phone, password) VALUES (%s, %s, %s, %s, %s, %s)"
             values = (user.first_name, user.last_name, user.position, user.email, user.phone, user.password)
             print(values)
             cursor.execute(query, values)
@@ -50,11 +51,8 @@ async def create_user(user: UserCreate):
 
             return {"message": "User created successfully"}
     except Exception as e:
+        print(e)
         return JSONResponse(content={"error": "Error creating user"}, status_code=500)
-    # finally:
-    #     if connection.is_connected():
-    #         cursor.close()
-    #         connection.close()
 
 # Log in a user
 @router.post("/login")
@@ -82,10 +80,6 @@ async def login(user: UserCreate):
     except mysql.connector.Error as e:
         print(e)
         return JSONResponse(content={"error": "Error logging in user"}, status_code=500)
-    # finally:
-    #     if connection.is_connected():
-    #         cursor.close()
-    #         connection.close()
 
 
 
