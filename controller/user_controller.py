@@ -69,9 +69,9 @@ async def login(user: UserCreate):
 
                 # Compare the plain text password with the stored password
                 if user.password == result[0]:
-                    return "Login successful"
+                    return True
                 else:
-                    return "Invalid email or password"
+                    return False
             else:
                 return "User not found"
     except mysql.connector.Error as e:
