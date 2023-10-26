@@ -1,5 +1,9 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Depends, HTTPException
+from mysql.connector import connect, Error
+from fastapi import FastAPI, Depends, HTTPException
+from mysql.connector import connect, Error
 
 from controller import user_controller
 
@@ -16,6 +20,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 @app.get("/")
 def read_root():
     return {"message": "CENTCOM Logistics API"}

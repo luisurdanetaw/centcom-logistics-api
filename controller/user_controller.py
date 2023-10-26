@@ -2,9 +2,10 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from model.user import User
-from service.user_service import register_user, login_user
+from service.user_service import register_user, login_user, find_facility_service
 from repository.dummy_db import get_users
 from fastapi.responses import JSONResponse
+
 
 router = APIRouter()
 
@@ -13,6 +14,11 @@ router = APIRouter()
 async def get_all_users():
    users = await get_users()
    return users
+
+@router.get("/findFacility")
+async def find_facility(name: str = ""):
+   return await find_facility_service(name)
+
 
 @router.post("/create")
 async def create_user(user: User):

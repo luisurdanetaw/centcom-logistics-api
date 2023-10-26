@@ -1,7 +1,10 @@
 from model.user import User
 import re
-from repository.dummy_db import get_users, create_user
+from repository.dummy_db import get_users, create_user, find_facility_repo
 import bcrypt
+
+from repository.user_repository import find_facility_repository
+
 
 async def register_user(user: User):
     pattern = r'^(?=.*[a-zA-Z])(?=.*\d).+$'
@@ -24,3 +27,7 @@ async def login_user(user: User):
     found_user = next((u for u in users if u.email == user.email), None)
 
     return bool(found_user and bcrypt.checkpw(user.password.encode('utf-8'), found_user.password.encode('utf-8')))
+
+async def find_facility_service(name:str = ""):
+    return await find_facility_repository(name)
+    #return await find_facility_repo(name)
