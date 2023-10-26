@@ -18,6 +18,7 @@ connection = mysql.connector.connect(
     database=database
 )
 
+
 router = APIRouter()
 
 # Define the User Pydantic model
@@ -30,7 +31,11 @@ class UserCreate(BaseModel):
     password: str ="NULL"
     phone: str = "NULL"
 
-# Create a user
+@router.get("/findFacility")
+async def find_facility(name: str = ""):
+   return await find_facility_service(name)
+
+
 @router.post("/create")
 async def create_user(user: UserCreate):
     try:
