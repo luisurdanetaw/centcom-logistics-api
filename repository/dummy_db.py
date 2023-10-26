@@ -1,7 +1,8 @@
 from model.user import User
 from model.tmr import Tmr
 
-test_user = User(email="tester@gmail.com", password="1234")
+
+test_user = User(email="tester@gmail.com", password="1234", location = "S")
 users = []
 tmrs = []
 users.append(test_user)
@@ -9,6 +10,10 @@ users.append(test_user)
 async def get_users():
     print(type(users))
     return users
+
+async def get_tmrs():
+    print(type(tmrs))
+    return tmrs
 
 async def create_user(user:User):
     print("called create user")

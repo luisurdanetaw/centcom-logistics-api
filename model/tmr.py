@@ -3,6 +3,7 @@ from datetime import date
 
 class Tmr(BaseModel):
     id_num: str
+    location: str
     unit_name: str
     requestor: str
     date_received: date
@@ -11,5 +12,15 @@ class Tmr(BaseModel):
     carrier: str
     weight: int
     containers: int
-    #we need to add RLD, ALD, RDD, ADD 
+    pieces: int
+
+    cargo_description: str
+    cargo_class: str
+    move: str
+    origin: str
+    destination: str
+    pre_transit: str
+    rld: date
+    rdd: date
+    post_transit: str
 

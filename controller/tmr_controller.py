@@ -3,8 +3,9 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from model.tmr import Tmr
 import service.tmr_service as tmr_service
-# from repository.dummy_db import get_users
+from repository.dummy_db import get_tmrs
 from fastapi.responses import JSONResponse
+#
 
 router = APIRouter()
 
@@ -17,9 +18,11 @@ async def create_tmr(tmr: Tmr):
     except Exception as e:
         return -1
 
-# @router.get("/findAll/")
-# async def get_all_users():
-#    users = await get_users()
-#    return users
+
+@router.get("/findAll/")
+async def get_all_tmrs():
+   tmrs = await get_tmrs()
+   return tmrs
+
 
 
