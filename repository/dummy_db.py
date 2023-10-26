@@ -1,21 +1,7 @@
 import bcrypt
 from model.user import User
 
-inventory = {
-    'Gas': {
-        'quantity': 10000,
-        'so': 15000,
-        'cf': 6240,
-        'class': 'IV'
 
-    },
-    'Water': {
-        'quantity': 20000,
-        'so': 30000,
-        'cf': 8400,
-        'class': 'I'
-    }
-}
 inventoryTwo = {
     'Ammo': {
         'quantity': 10000,
@@ -39,7 +25,21 @@ facility = {
     'email': 'luisurdaneta@army.mil',
     'status': 'red',
     'phone': '3054128032',
-    'inventory': inventory
+    'inventory': {
+        'Gas': {
+            'quantity': 10000,
+            'so': 15000,
+            'cf': 6240,
+            'class': 'IV'
+
+        },
+        'Water': {
+            'quantity': 20000,
+            'so': 30000,
+            'cf': 8400,
+            'class': 'I'
+        }
+    }
 }
 facilityTwo = {
     'name': 'Test Base',
