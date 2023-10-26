@@ -59,7 +59,7 @@ async def login(user: UserCreate):
             cursor = connection.cursor()
 
             # Retrieve the user's password from the database
-            query = "SELECT password FROM user WHERE email = %s"
+            query = "SELECT password FROM users WHERE email = %s"
             cursor.execute(query, (user.email,))
             result = cursor.fetchone()
 
@@ -75,6 +75,7 @@ async def login(user: UserCreate):
             else:
                 return "User not found"
     except mysql.connector.Error as e:
+        print(e)
         return JSONResponse(content={"error": "Error logging in user"}, status_code=500)
     # finally:
     #     if connection.is_connected():
