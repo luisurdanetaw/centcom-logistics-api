@@ -6,10 +6,10 @@ from fastapi.responses import JSONResponse
 import mysql.connector
 
 # Define the database connection parameters
-host = "localhost"  # Replace with your database host
-user = "new_user"  # Replace with your database username
-password = "password"  # Replace with your database password
-database = "CENTCOM"  # Replace with your database name
+host = "34.28.120.16"  # Replace with your database host
+user = "root"  # Replace with your database username
+password = "centcom2023!"  # Replace with your database password
+database = "usf-sr-project-centcom"  # Replace with your database name
 
 connection = mysql.connector.connect(
     host=host,

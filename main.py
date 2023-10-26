@@ -6,10 +6,23 @@ import mysql.connector
 
 
 # Define the database connection parameters
-host = "localhost"  # Replace with your database host
-user = "new_user"  # Replace with your database username
-password = "password"  # Replace with your database password
-database = "CENTCOM"  # Replace with your database name
+host = "34.28.120.16"  # Replace with your database host
+user = "root"  # Replace with your database username
+password = "centcom2023!"  # Replace with your database password
+database = "usf-sr-project-centcom"  # Replace with your database name
+
+connection = mysql.connector.connect(
+host=host,
+user=user,
+password=password,
+database=database
+)
+
+if connection.is_connected():
+    print("Connected to the database")
+    cursor = connection.cursor()
+else:
+    print("Failed to connect to the database")
 
 app = FastAPI()
 
@@ -30,20 +43,8 @@ def read_root():
 
 @app.get("/test")
 def read_root():
-    connection = mysql.connector.connect(
-    host=host,
-    user=user,
-    password=password,
-    database=database
-    )
-
-    if connection.is_connected():
-        print("Connected to the database")
-        cursor = connection.cursor()
-    else:
-        print("Failed to connect to the database")
-        query = "SELECT * FROM user"
-        cursor.execute(query)
+    query = "SELECT * FROM users"
+    cursor.execute(query)
     for row in cursor.fetchall():
         print(row)
 
@@ -53,3 +54,4 @@ def read_root():
     return {"message": "CENTCOM Logistics API"}
 
 app.include_router(user_controller.router, prefix="/user")
+# app.include_router(tmr_controller.router, prefix="/tmr")
