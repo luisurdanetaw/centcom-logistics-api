@@ -29,11 +29,11 @@ async def find_facilities_with_supplies_repository(supply: str = ""):
         connection = await create_db_connection()
         with (connection.cursor(dictionary=True) as cursor):
             query = (
-                "SELECT facilities.* "
+                "SELECT facilities.*, inventory.quantity, inventory.stockage_objective, inventory.consumption "
                 "FROM facilities "
-                "INNER JOIN inventories "
-                "ON facilities.facility_id = inventories.facility_id "
-                "WHERE inventories.supply = %s"
+                "INNER JOIN inventory " 
+                "ON facilities.id = inventory.facility_id "
+                "WHERE inventory.item_name = %s"
             )
 
             cursor.execute(query, (supply,))
@@ -43,5 +43,6 @@ async def find_facilities_with_supplies_repository(supply: str = ""):
 
             return facilities
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=str(e))
 

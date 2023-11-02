@@ -39,11 +39,11 @@ async def find_facility(name: str = ""):
 
 
 @router.get("/findFacilitiesWithSupplies")
-async def find_facilities_with_supplies(user_id, supply, page=0):
-    if page < 0:
-        return JSONResponse(content={"error": "Page must be >= 0"}, status_code=400)
-
+async def find_facilities_with_supplies(user_id, supply, page: int = 1):
+    #if page < 1:
+       # return JSONResponse(content={"error": "Page must be >= 0"}, status_code=400)
     try:
+        print("calling service search results")
         return await get_supply_search_results_page(user_id, supply, page)
     except HTTPException as http_exception:
         if http_exception.status_code == 404:
