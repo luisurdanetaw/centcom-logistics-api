@@ -1,8 +1,8 @@
 # user_controller.py
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from model.user import User
-from service.user_service import register_user, login_user, find_facility_service
+from service.user_service import find_facility_service, get_supply_search_results_page
 from repository.dummy_db import get_users
 from fastapi.responses import JSONResponse
 import mysql.connector
@@ -20,8 +20,8 @@ connection = mysql.connector.connect(
     database=database
 )
 
-
 router = APIRouter()
+
 
 # Define the User Pydantic model
 class UserCreate(BaseModel):
@@ -29,12 +29,30 @@ class UserCreate(BaseModel):
     last_name: str = "NULL"
     position: str = "NULL"
     email: str = "NULL"
-    password: str ="NULL"
+    password: str = "NULL"
     phone: str = "NULL"
+
 
 @router.get("/findFacility")
 async def find_facility(name: str = ""):
-   return await find_facility_service(name)
+    return await find_facility_service(name)
+
+
+@router.get("/findFacilitiesWithSupplies")
+async def find_facilities_with_supplies(user_id, supply, page=0):
+    if page < 0:
+        return JSONResponse(content={"error": "Page must be >= 0"}, status_code=400)
+
+    try:
+        return await get_supply_search_results_page(user_id, supply, page)
+    except HTTPException as http_exception:
+        if http_exception.status_code == 404:
+            return JSONResponse(content={"error": "No results found"}, status_code=404)
+        else:
+            return JSONResponse(content={"error": http_exception}, status_code=500)
+    except Exception as e:
+        return JSONResponse(content={"error": e}, status_code=500)
+
 
 
 @router.post("/create")
@@ -53,6 +71,7 @@ async def create_user(user: UserCreate):
     except Exception as e:
         print(e)
         return JSONResponse(content={"error": "Error creating user"}, status_code=500)
+
 
 # Log in a user
 @router.post("/login")
@@ -80,55 +99,3 @@ async def login(user: UserCreate):
     except mysql.connector.Error as e:
         print(e)
         return JSONResponse(content={"error": "Error logging in user"}, status_code=500)
-
-
-
-
-# async def login(user: UserCreate):
-#     cursor = connection.cursor()
-#     try:
-#         # Retrieve the user from the database
-#         query = "SELECT * FROM users WHERE email = %s"
-#         cursor.execute(query, (user.email,))
-#         found_user = cursor.fetchone()
-
-#         if found_user:
-#             # Check the hashed password (using bcrypt or your chosen method)
-#             if found_user[1] == "hashed_password_here":  # Replace with actual hashed password
-#                 return {"message": "Login successful"}
-        
-#         return JSONResponse(content={"error": "Invalid email or password"}, status_code=400)
-#     except Exception as e:
-#         return JSONResponse(content={"error": "Error logging in"}, status_code=500)
-#     finally:
-#         if connection.is_connected():
-#             cursor.close()
-            # connection.close()
-
-
-
-# # user_controller.py
-# from fastapi import APIRouter
-# from pydantic import BaseModel
-# from model.user import User
-# from service.user_service import register_user, login_user
-# from repository.dummy_db import get_users
-# from fastapi.responses import JSONResponse
-
-# router = APIRouter()
-
-# #/user
-# @router.get("/findAll")
-# async def get_all_users():
-#    users = await get_users()
-#    return users
-
-# @router.post("/create")
-# async def create_user(user: User):
-#     created_user = await register_user(user)
-#     return created_user
-
-# @router.post("/login")
-# async def login(user: User):
-#     loggedIn = await login_user(user)
-#     return loggedIn
