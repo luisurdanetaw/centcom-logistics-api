@@ -46,7 +46,12 @@ async def get_supply_search_results_page(user_id, supply, page):
     try:
         facilities = search_cache[user_id]['results']
         paginated_facilities = facilities[start_idx:end_idx]
-        return paginated_facilities
+
+        total_pages = len(facilities)//page_size
+        if len(facilities) % page_size != 0:
+            total_pages += 1
+
+        return paginated_facilities, total_pages, len(facilities)
     except KeyError as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
@@ -55,6 +60,6 @@ async def get_supply_search_results_page(user_id, supply, page):
 async def insert_results_into_cache(user_id, supply, results):
     search_cache[user_id] = {
         'results': results,
-        'supply': supply
+        'supply': supply,
     }
 

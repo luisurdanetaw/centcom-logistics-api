@@ -43,8 +43,8 @@ async def find_facilities_with_supplies(user_id, supply, page: int = 1):
     #if page < 1:
        # return JSONResponse(content={"error": "Page must be >= 0"}, status_code=400)
     try:
-        print("calling service search results")
-        return await get_supply_search_results_page(user_id, supply, page)
+        paginated_facilities, total_pages, total_results = await get_supply_search_results_page(user_id, supply, page)
+        return JSONResponse(content={"results": paginated_facilities, "total_pages": total_pages, "total_results": total_results}, status_code=400)
     except HTTPException as http_exception:
         if http_exception.status_code == 404:
             return JSONResponse(content={"error": "No results found"}, status_code=404)
