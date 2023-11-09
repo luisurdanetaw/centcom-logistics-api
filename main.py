@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from starlette.middleware.cors import CORSMiddleware
-from controller import user_controller
+from controller import user_controller, tmr_controller
 import mysql.connector
 
 
@@ -52,4 +52,4 @@ def read_root():
     return {"message": "CENTCOM Logistics API"}
 
 app.include_router(user_controller.router, prefix="/user")
-# app.include_router(tmr_controller.router, prefix="/tmr")
+app.include_router(tmr_controller.router, prefix="/tmr")
