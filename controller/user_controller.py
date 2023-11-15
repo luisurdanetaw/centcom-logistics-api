@@ -6,6 +6,8 @@ from service.user_service import find_facility_service, get_supply_search_result
 from repository.dummy_db import get_users
 from fastapi.responses import JSONResponse
 import mysql.connector
+import re
+import bcrypt
 
 # Define the database connection parameters
 host = "34.28.120.16"  # Replace with your database host
@@ -59,6 +61,15 @@ async def find_facilities_with_supplies(user_id, supply, page: int = 1):
 async def create_user(user: UserCreate):
     try:
         if connection.is_connected():
+            if not any(char.isupper() for char in user.password):
+                raise HTTPException(status_code=400, detail="Password must contain at least one capitalized letter")
+            if len(user.password) < 8:
+                raise HTTPException(status_code=400, detail="Password must be at least 8 characters long")
+            if not re.search(r'[!@#$%^&*(),.?":{}|<>]', user.password):
+                raise HTTPException(status_code=400, detail="Password must contain at least one special character")
+            if not re.match(r'^\d{3}-\d{3}-\d{4}$', user.phone):
+                raise HTTPException(status_code=400, detail="Invalid phone number format. Please use XXX-XXX-XXXX format")
+            hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt())
             cursor = connection.cursor()
             # Insert the user into the database
             query = "INSERT INTO users (first_name, last_name, position, email, phone, password) VALUES (%s, %s, %s, %s, %s, %s)"
@@ -71,6 +82,9 @@ async def create_user(user: UserCreate):
     except Exception as e:
         print(e)
         return JSONResponse(content={"error": "Error creating user"}, status_code=500)
+    
+    
+
 
 
 # Log in a user

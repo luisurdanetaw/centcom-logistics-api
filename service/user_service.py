@@ -6,7 +6,9 @@ from repository.dummy_db import get_users, create_user, find_facility_repo
 import bcrypt
 from model.user import User
 from repository.user_repository import find_facility_repository, find_facilities_with_supplies_repository
+import re
 
+from fastapi import FastAPI
 search_cache = {
 
 }
@@ -62,4 +64,21 @@ async def insert_results_into_cache(user_id, supply, results):
         'results': results,
         'supply': supply,
     }
+
+
+
+app = FastAPI()
+
+async def create_user_service(email: str, password: str):
+    # Validate password using regex
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        raise HTTPException(status_code=400, detail="Password must contain at least one special character")
+
+    # Hash the password using bcrypt before storing it in the database
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+    # Call the repository function to create the user
+    user = await create_user(email, hashed_password)
+
+    return user
 
