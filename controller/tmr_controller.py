@@ -81,20 +81,6 @@ async def update_inventory(updateRequest: updateRequest):
             values = (updateRequest.quantity, updateRequest.facility_id, updateRequest.item_name, )
             cursor.execute(update_query, values)
             connection.commit()
-        
-        update_query = "UPDATE facilities f \n\
-                        SET status = ( \n\
-                            SELECT \n\
-                                CASE \n\
-                                    WHEN COUNT(*) = SUM(CASE WHEN i.status = 'green' THEN 1 ELSE 0 END) THEN 'green' \n\
-                                    WHEN SUM(CASE WHEN i.status = 'yellow' THEN 1 ELSE 0 END) > 0 THEN 'yellow' \n\
-                                    ELSE 'black' \n\
-                                END \n\
-                            FROM inventory i \n\
-                            WHERE f.id = i.facility_id \n\
-                        )"
-        cursor.execute(update_query)
-        connection.commit()
 
         update_query = "UPDATE inventory \n\
                         SET \n\
@@ -104,6 +90,24 @@ async def update_inventory(updateRequest: updateRequest):
                                     WHEN quantity >= 0.5 * stockage_objective AND quantity < 0.75 * stockage_objective THEN 'Yellow' \n\
                                     ELSE 'Black' \n\
                         END"
+        print(update_query)
+        cursor.execute(update_query)
+        connection.commit()
+        
+        update_query = """
+                UPDATE facilities f
+                SET status = (
+                    SELECT 
+                        CASE
+                            WHEN SUM(CASE WHEN i.status = 'black' THEN 1 ELSE 0 END) > 0 THEN 'black'
+                            WHEN SUM(CASE WHEN i.status = 'yellow' THEN 1 ELSE 0 END) > 0 THEN 'yellow'
+                            ELSE 'green'
+                        END
+                    FROM inventory i
+                    WHERE f.id = i.facility_id
+                )
+            """
+        print(update_query)
         cursor.execute(update_query)
         connection.commit()
 
