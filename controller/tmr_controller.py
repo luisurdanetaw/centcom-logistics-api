@@ -1,11 +1,10 @@
 # tmr_controller.py
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 from model.updateRequest import updateRequest
 import mysql.connector
-
-from service.tmr_service import find_all_tmrs_service
+from model.tmr import TMR
+from service.tmr_service import find_all_tmrs_service, create_tmr_service
 
 # Define the database connection parameters
 host = "34.28.120.16"  # Replace with your database host
@@ -28,6 +27,7 @@ def item_exists(cursor, facility_id, item_name):
     cursor.execute(query)
     return cursor.fetchone() is not None
 
+
 @router.get("/findAll")
 async def find_all_tmrs(facility_id: str = ""):
     try:
@@ -36,9 +36,20 @@ async def find_all_tmrs(facility_id: str = ""):
         if http_exception.status_code == 404:
             return JSONResponse(content={"error": "No results found"}, status_code=404)
         else:
-            return JSONResponse(content={"error": http_exception}, status_code=500)
+            return JSONResponse(content={"error": str(http_exception.detail)}, status_code=500)
     except Exception as e:
-        return JSONResponse(content={"error": e}, status_code=500)
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+@router.post("/createTMR")
+async def create_tmr(tmr_create: TMR):
+    try:
+        # You might want to add validation logic here before calling the service
+        result = await create_tmr_service(tmr_create)
+        return JSONResponse(content={"message": "TMR created successfully", "data": result}, status_code=201)
+    except HTTPException as http_exception:
+        return JSONResponse(content={"error": str(http_exception.detail)}, status_code=http_exception.status_code)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
     
 @router.get("/inventory")
 async def find_all_inventory(facility_id: str = ""):

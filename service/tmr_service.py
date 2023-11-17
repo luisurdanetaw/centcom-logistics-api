@@ -1,13 +1,11 @@
-from repository.tmr_repository import find_all_tmrs_repository
+# tmr_service.py
+from repository.tmr_repository import find_all_tmrs_repository, create_tmr_repository
 from fastapi import HTTPException
+from model.tmr import TMR
 import time
 
-#Invalidate cache after 5 minutes
 CACHE_TTL_SECONDS = 300
-tmr_cache = {
-
-}
-
+tmr_cache = {}
 
 async def find_all_tmrs_service(facility_id):
     try:
@@ -20,10 +18,25 @@ async def find_all_tmrs_service(facility_id):
             del tmr_cache[facility_id]
 
         tmrs = await find_all_tmrs_repository(facility_id)
-        tmr_cache[facility_id] = (tmrs, current_time)  # Store data and timestamp in cache
+        tmr_cache[facility_id] = (tmrs, current_time)
         return tmrs
 
     except HTTPException as http_exception:
         raise http_exception
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+async def create_tmr_service(tmr_data: TMR):
+    try:
+        # You can add additional validation logic here before interacting with the repository
+        # For example, you might want to ensure that required fields are present before proceeding
+        if not tmr_data.requestor_id or not tmr_data.cargo_description:
+            raise HTTPException(status_code=400, detail="requestor_id and cargo_description are required fields")
+
+        created_tmr = await create_tmr_repository(tmr_data)
+        return created_tmr
+    except HTTPException as http_exception:
+        raise http_exception
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+

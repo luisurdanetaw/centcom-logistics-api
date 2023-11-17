@@ -1,5 +1,7 @@
+# repository.database.py
 from fastapi import HTTPException
 from mysql.connector import connect, Error
+
 
 
 async def create_db_connection():
@@ -37,4 +39,3 @@ async def find_all_where(table, field, hasValue):
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
-

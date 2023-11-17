@@ -67,8 +67,6 @@ async def insert_results_into_cache(user_id, supply, results):
 
 
 
-app = FastAPI()
-
 async def create_user_service(email: str, password: str):
     # Validate password using regex
     if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
