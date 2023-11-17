@@ -77,7 +77,7 @@ async def update_inventory(updateRequest: updateRequest):
             connection.commit()
         else:
             # If it exists, update the quantity
-            update_query = "UPDATE inventory SET quantity = %s WHERE facility_id = %s AND item_name = %s"
+            update_query = "UPDATE inventory SET quantity = quantity + %s WHERE facility_id = %s AND item_name = %s"
             values = (updateRequest.quantity, updateRequest.facility_id, updateRequest.item_name, )
             cursor.execute(update_query, values)
             connection.commit()
