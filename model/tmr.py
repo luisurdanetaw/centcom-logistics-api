@@ -11,3 +11,4 @@ class TMR(BaseModel):
     id_num: Optional[str] = None
     requestor: Optional[str] = None
     date_received: Optional[str] = None
+    facility_id: Optional[str] = None

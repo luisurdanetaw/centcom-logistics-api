@@ -32,6 +32,10 @@ async def create_tmr_service(tmr_data: TMR):
         # For example, you might want to ensure that required fields are present before proceeding
         if not tmr_data.requestor_id or not tmr_data.cargo_description:
             raise HTTPException(status_code=400, detail="requestor_id and cargo_description are required fields")
+        # Input validation: Check if the requestor contains only alphabetical characters
+        if not tmr_data.requestor or not all(char.isalpha() or char.isspace() for char in tmr_data.requestor):
+            raise HTTPException(status_code=400, detail="Requestor must contain only alphabetical characters and spaces")
+
 
         created_tmr = await create_tmr_repository(tmr_data)
         return created_tmr
