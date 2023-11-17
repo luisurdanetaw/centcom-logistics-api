@@ -81,6 +81,31 @@ async def update_inventory(updateRequest: updateRequest):
             values = (updateRequest.quantity, updateRequest.facility_id, updateRequest.item_name, )
             cursor.execute(update_query, values)
             connection.commit()
+        
+        update_query = "UPDATE facilities f \
+                        SET status = ( \
+                            SELECT \
+                                CASE \
+                                    WHEN COUNT(*) = SUM(CASE WHEN i.status = 'green' THEN 1 ELSE 0 END) THEN 'green' \
+                                    WHEN SUM(CASE WHEN i.status = 'yellow' THEN 1 ELSE 0 END) > 0 THEN 'yellow' \
+                                    ELSE 'black' \
+                                END \
+                            FROM inventory i \
+                            WHERE f.id = i.facility_id \
+                        )"
+        cursor.execute(update_query)
+        connection.commit()
+
+        update_query = "UPDATE inventory \
+                        SET \
+                            status = \
+                                CASE \
+                                    WHEN quantity >= 0.75 * stockage_objective THEN 'Green' \
+                                    WHEN quantity >= 0.5 * stockage_objective AND quantity < 0.75 * stockage_objective THEN 'Yellow' \
+                                    ELSE 'Black' \
+                        END"
+        cursor.execute(update_query)
+        connection.commit()
 
         return {"message": "Inventory updated successfully"}
 
