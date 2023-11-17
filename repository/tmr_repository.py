@@ -20,14 +20,14 @@ async def find_all_tmrs_repository(facility_id: str = ""):
 
 async def create_tmr_repository(tmr_data: TMR):
     try:
-        query = "INSERT INTO tmrs (requestor_id, cargo_description, quantity, units, id_num, requestor, date_received) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        query = "INSERT INTO tmrs (requestor_id, cargo_description, quantity, units, id_num, requestor, date_received, facility_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
 
         # Correctly await the create_db_connection coroutine
         connection = await create_db_connection()
         
         try:
             with (connection.cursor(dictionary=True) as cursor):
-                cursor.execute(query, (tmr_data.requestor_id, tmr_data.cargo_description, tmr_data.quantity, tmr_data.units, tmr_data.id_num, tmr_data.requestor, tmr_data.date_received,))
+                cursor.execute(query, (tmr_data.requestor_id, tmr_data.cargo_description, tmr_data.quantity, tmr_data.units, tmr_data.id_num, tmr_data.requestor, tmr_data.date_received, tmr_data.facility_id,))
                 connection.commit()
         finally:
             connection.close()
