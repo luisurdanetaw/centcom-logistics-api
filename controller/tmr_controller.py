@@ -82,6 +82,13 @@ async def update_inventory(updateRequest: updateRequest):
             cursor.execute(update_query, values)
             connection.commit()
 
+            temp = updateRequest.quantity * -1
+            if(temp>0):
+                update_query = "UPDATE inventory SET consumption = consumption + %s WHERE facility_id = %s AND item_name = %s"
+                values = (temp, updateRequest.facility_id, updateRequest.item_name)
+                cursor.execute(update_query, values)
+                connection.commit()
+
         update_query = "UPDATE inventory \n\
                         SET \n\
                             status = \n\
