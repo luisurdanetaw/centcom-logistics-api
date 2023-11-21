@@ -71,14 +71,14 @@ async def update_inventory(updateRequest: updateRequest):
         # Check if the item exists
         if not item_exists(cursor, updateRequest.facility_id, updateRequest.item_name):
             # If not, insert a new record with the specified quantity
-            insert_query = "INSERT INTO inventory (facility_id, item_name, quantity) VALUES (%s, %s, %s)"
-            values = (updateRequest.facility_id, updateRequest.item_name, updateRequest.quantity)
+            insert_query = "INSERT INTO inventory (facility_id, item_name, quantity, stockage_objective, consumption) VALUES (%s, %s, %s, %s, 0)"
+            values = (updateRequest.facility_id, updateRequest.item_name, updateRequest.quantity, updateRequest.quantity)
             cursor.execute(insert_query, values)
             connection.commit()
         else:
             # If it exists, update the quantity
             update_query = "UPDATE inventory SET quantity = quantity + %s WHERE facility_id = %s AND item_name = %s"
-            values = (updateRequest.quantity, updateRequest.facility_id, updateRequest.item_name, )
+            values = (updateRequest.quantity, updateRequest.facility_id, updateRequest.item_name)
             cursor.execute(update_query, values)
             connection.commit()
 
@@ -90,7 +90,6 @@ async def update_inventory(updateRequest: updateRequest):
                                     WHEN quantity >= 0.5 * stockage_objective AND quantity < 0.75 * stockage_objective THEN 'Yellow' \n\
                                     ELSE 'Black' \n\
                         END"
-        print(update_query)
         cursor.execute(update_query)
         connection.commit()
         
@@ -107,7 +106,6 @@ async def update_inventory(updateRequest: updateRequest):
                     WHERE f.id = i.facility_id
                 )
             """
-        print(update_query)
         cursor.execute(update_query)
         connection.commit()
 
