@@ -7,6 +7,7 @@ import time
 CACHE_TTL_SECONDS = 300
 tmr_cache = {}
 
+
 async def find_all_tmrs_service(facility_id):
     try:
         tmrs, timestamp = tmr_cache.get(facility_id, (None, 0))
@@ -25,6 +26,7 @@ async def find_all_tmrs_service(facility_id):
         raise http_exception
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 async def create_tmr_service(tmr_data: TMR):
     try:
