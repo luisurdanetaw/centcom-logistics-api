@@ -47,11 +47,9 @@ async def consumption(facility_id: str = "", item_name: str = ""):
         values = (facility_id, item_name)
         cursor.execute(query, values)
         result = cursor.fetchone()
-        print (result)
         return result
     except HTTPException as http_exception:
         print(http_exception.detail)
-        print(result)
 
 @router.get("/tmrsReceived")
 async def tmrs_received(facility_id: str = ""):
@@ -70,3 +68,23 @@ async def tmrs_received(facility_id: str = ""):
             return JSONResponse(content={"error": str("Internal Server error")}, status_code=500)
     except Exception as e:
         return JSONResponse(content={"error": str("Internal Server Error")}, status_code=500)
+    
+@router.get("/topRequestors")
+async def top_requestors(facility_id: str = ""):
+    cursor = connection.cursor()
+    try:
+        query = """
+                SELECT requestor, COUNT(requestor) as request_count
+                FROM tmrs
+                WHERE facility_id = %s
+                GROUP BY requestor
+                ORDER BY request_count DESC
+                LIMIT 10;
+                """
+        cursor.execute(query, (facility_id,))
+        result = cursor.fetchall()
+        for row in result:
+            print(f"Requestor: {row[0]}, Request Count: {row[1]}")
+        return result
+    except HTTPException as http_exception:
+        print(http_exception.detail)
