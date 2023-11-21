@@ -23,13 +23,13 @@ router = APIRouter()
 
 @router.get("/tmrsCompleted")
 async def tmrs_completed(facility_id: str = ""):
-    cursor = connection.cursor()
     try:
-        current_month_completed, delta = await tmrs_completed_service(facility_id)
+        current_month_completed, change_percentage, delta = await tmrs_completed_service(facility_id)
         return JSONResponse(
             content={
                 "completed_current_month": current_month_completed,
-                "change": delta
+                "change_percentage": change_percentage,
+                "delta": delta
             }, status_code=200)
     except HTTPException as http_exception:
         print(http_exception.detail)
@@ -55,11 +55,12 @@ async def consumption(facility_id: str = "", item_name: str = ""):
 @router.get("/tmrsReceived")
 async def tmrs_received(facility_id: str = ""):
     try:
-        current_month_received, delta = await tmrs_received_service(facility_id)
+        current_month_received, change_percentage, delta = await tmrs_received_service(facility_id)
         return JSONResponse(
             content={
                 "received_current_month": current_month_received,
-                "change": delta
+                "change_percentage": change_percentage,
+                "delta": delta
             }, status_code=200)
     except HTTPException as http_exception:
         print(http_exception.detail)
@@ -75,11 +76,12 @@ async def tmrs_received(facility_id: str = ""):
 @router.get("/shipmentSpeed")
 async def shipment_speed(facility_id: str = ""):
     try:
-        current_month_speed, delta = await shipment_speed_service(facility_id)
+        current_month_speed, change_percentage, delta = await shipment_speed_service(facility_id)
         return JSONResponse(
             content={
                 "shipment_speed": current_month_speed,
-                "change": delta
+                "change_percentage": change_percentage,
+                "delta": delta
             }, status_code=200)
     except HTTPException as http_exception:
         print(http_exception.detail)
@@ -94,11 +96,12 @@ async def shipment_speed(facility_id: str = ""):
 @router.get("/delayedShipments")
 async def delayed_shipments(facility_id: str = ""):
     try:
-        current_month_delayed_shipments, delta = await delayed_shipments_service(facility_id)
+        current_month_delayed_shipments,change_percentage, delta = await delayed_shipments_service(facility_id)
         return JSONResponse(
             content={
                 "shipment_speed": current_month_delayed_shipments,
-                "change": delta
+                "change_percentage": change_percentage,
+                "delta": delta
             }, status_code=200)
     except HTTPException as http_exception:
         print(http_exception.detail)

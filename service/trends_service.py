@@ -21,8 +21,9 @@ async def tmrs_completed_service(facility_id: str = ""):
         current_month_completed = len(current_month_records)
         last_month_completed = len(last_month_records)
 
-        delta = ((current_month_completed - last_month_completed) / last_month_completed) * 100
-        return current_month_completed, delta
+        change_percentage = ((current_month_completed - last_month_completed) / last_month_completed) * 100
+        delta = current_month_completed - last_month_completed
+        return current_month_completed, round(change_percentage, 2), delta
 
     except HTTPException as http_exception:
         raise http_exception
@@ -42,10 +43,16 @@ async def tmrs_received_service(facility_id: str = ""):
         current_month_received = len(current_month_records)
         last_month_received = len(last_month_records)
 
-        delta = ((current_month_received - last_month_received) / last_month_received) * 100
-        return current_month_received, delta
+
+
+        print(current_month_received)
+        change_percentage = ((current_month_received - last_month_received) // last_month_received) * 100 if last_month_received != 0 else 0
+
+        delta = current_month_received - last_month_received
+        return current_month_received, round(change_percentage, 2), delta
 
     except HTTPException as http_exception:
+        print(http_exception.detail)
         raise http_exception
 
 
@@ -80,9 +87,10 @@ async def shipment_speed_service(facility_id: str = ""):
         average_speed_last_month = sum(last_month_speeds) / len(last_month_speeds) if last_month_speeds else 0
 
         # Calculate change compared to the previous month
-        delta = ((average_speed_current_month - average_speed_last_month) / average_speed_last_month) * 100 if average_speed_last_month != 0 else 0
+        change_percentage = ((average_speed_current_month - average_speed_last_month) / average_speed_last_month) * 100 if average_speed_last_month != 0 else 0
+        delta = average_speed_current_month - average_speed_last_month
 
-        return average_speed_current_month, delta
+        return round(average_speed_current_month, 2), round(change_percentage, 2), delta
 
     except HTTPException as http_exception:
         raise http_exception
@@ -102,8 +110,9 @@ async def delayed_shipments_service(facility_id: str = ""):
         current_month_delayed = len(list(filter(lambda tmr: tmr['rdd'] - tmr['add'] < timedelta(days=0), current_month_records)))
         last_month_delayed = len(list(filter(lambda tmr: tmr['rdd'] - tmr['add'] < timedelta(days=0), last_month_records)))
 
-        delta = ((current_month_delayed - last_month_delayed) / last_month_delayed) * 100
-        return current_month_delayed, delta
+        change_percentage = ((current_month_delayed - last_month_delayed) // last_month_delayed) * 100
+        delta = current_month_delayed - last_month_delayed
+        return current_month_delayed, round(change_percentage, 2), delta
 
     except HTTPException as http_exception:
         raise http_exception
