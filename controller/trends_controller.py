@@ -3,7 +3,7 @@ from starlette.exceptions import HTTPException
 from starlette.responses import JSONResponse
 import mysql.connector
 
-from service.trends_service import tmrs_completed_service
+from service.trends_service import tmrs_completed_service, tmrs_received_service
 
 # Define the database connection parameters
 host = "34.28.120.16"  # Replace with your database host
@@ -24,7 +24,7 @@ router = APIRouter()
 async def tmrs_completed(facility_id: str = ""):
     cursor = connection.cursor()
     try:
-        current_month_completed, delta =  await tmrs_completed_service(facility_id)
+        current_month_completed, delta = await tmrs_completed_service(facility_id)
         return JSONResponse(
             content={
                 "completed_current_month": current_month_completed,
@@ -52,6 +52,18 @@ async def consumption(facility_id: str = "", item_name: str = ""):
     except HTTPException as http_exception:
         print(http_exception.detail)
         print(result)
+
+@router.get("/tmrsReceived")
+async def tmrs_received(facility_id: str = ""):
+    try:
+        current_month_received, delta = await tmrs_received_service(facility_id)
+        return JSONResponse(
+            content={
+                "received_current_month": current_month_received,
+                "change": delta
+            }, status_code=200)
+    except HTTPException as http_exception:
+        print(http_exception.detail)
         if http_exception.status_code == 404:
             return JSONResponse(content={"error": "No results found"}, status_code=404)
         else:
