@@ -83,8 +83,6 @@ async def top_requestors(facility_id: str = ""):
                 """
         cursor.execute(query, (facility_id,))
         result = cursor.fetchall()
-        for row in result:
-            print(f"Requestor: {row[0]}, Request Count: {row[1]}")
         return result
     except HTTPException as http_exception:
         print(http_exception.detail)
