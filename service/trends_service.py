@@ -6,7 +6,7 @@ from controller.tmr_controller import find_all_tmrs
 
 from datetime import datetime, timedelta, date
 
-from repository.tmr_repository import find_all_tmrs_by_country
+from repository.trends_repository import find_all_tmrs_by_country
 
 
 async def tmrs_completed_service(country: str = ""):

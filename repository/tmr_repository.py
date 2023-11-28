@@ -14,13 +14,6 @@ async def find_all_tmrs_repository(facility_id: str = ""):
         raise HTTPException(status_code=500, detail=str(e))
     
 
-async def find_all_tmrs_by_country(country: str = ""):
-    try:
-        return await find_all_where("tmrs JOIN facilities ON tmrs.facility_id = facilities.id","country", country)
-    except HTTPException as http_exception:
-        raise http_exception
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 async def create_tmr_repository(tmr_data: TMR):
     try:
         query = "INSERT INTO tmrs (requestor_id, cargo_description, quantity, units, id_num, requestor, date_received, facility_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
