@@ -5,7 +5,8 @@ import re
 from repository.dummy_db import get_users, create_user, find_facility_repo
 import bcrypt
 from model.user import User
-from repository.user_repository import find_facility_repository, find_facilities_with_supplies_repository
+from repository.user_repository import find_facility_repository, find_facilities_with_supplies_repository, \
+    find_all_facilities_repository
 import re
 
 from fastapi import FastAPI
@@ -79,4 +80,13 @@ async def create_user_service(email: str, password: str):
     user = await create_user(email, hashed_password)
 
     return user
+
+
+async def find_all_facilities_service():
+    try:
+        facilities = await find_all_facilities_repository()
+        return list(map(lambda x: x["name"], filter(lambda x: x is not None, facilities)))
+
+    except HTTPException as http_exception:
+        raise http_exception
 

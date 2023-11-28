@@ -2,7 +2,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from model.user import User
-from service.user_service import find_facility_service, get_supply_search_results_page
+from service.user_service import find_facility_service, get_supply_search_results_page, find_all_facilities_service
 from repository.dummy_db import get_users
 from fastapi.responses import JSONResponse
 import mysql.connector
@@ -39,6 +39,9 @@ class UserCreate(BaseModel):
 async def find_facility(name: str = ""):
     return await find_facility_service(name)
 
+@router.get("/findAllFacilities")
+async def find_all_facilities():
+    return await find_all_facilities_service()
 
 @router.get("/findFacilitiesWithSupplies")
 async def find_facilities_with_supplies(user_id, supply, page: int = 1):
