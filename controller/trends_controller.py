@@ -3,6 +3,7 @@ from starlette.exceptions import HTTPException
 from starlette.responses import JSONResponse
 import mysql.connector
 
+from repository.database import create_db_connection
 from service.trends_service import tmrs_completed_service, tmrs_received_service, shipment_speed_service, \
     delayed_shipments_service
 
@@ -115,7 +116,8 @@ async def delayed_shipments(country: str = ""):
     
 @router.get("/topRequestors")
 async def top_requestors(country: str = ""):
-    cursor = connection.cursor()
+    connect = await create_db_connection()
+    cursor = connect.cursor()
     try:
         query = """
                 SELECT requestor, COUNT(requestor) as request_count
@@ -127,6 +129,7 @@ async def top_requestors(country: str = ""):
                 """
         cursor.execute(query, (country,))
         result = cursor.fetchall()
+        connect.close()
         return result
     except HTTPException as http_exception:
         print(http_exception.detail)
