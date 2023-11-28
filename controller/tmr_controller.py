@@ -116,7 +116,24 @@ async def update_inventory(updateRequest: updateRequest):
         cursor.execute(update_query)
         connection.commit()
 
+        update_query = """
+                UPDATE historical_inventory ht
+                SET ht.class = (
+                    SELECT iv.class
+                    FROM inventory iv
+                    WHERE iv.item_name = ht.item_name
+                    ORDER BY iv.inventory_id DESC
+                    LIMIT 1
+                )
+                WHERE ht.class IS NULL;
+                """
+        cursor.execute(update_query)
+        connection.commit()
+
+
+
         return {"message": "Inventory updated successfully"}
+    
 
     except Exception as e:
         print(e)
