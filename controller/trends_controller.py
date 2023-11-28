@@ -22,9 +22,9 @@ database=database
 router = APIRouter()
 
 @router.get("/tmrsCompleted")
-async def tmrs_completed(facility_id: str = ""):
+async def tmrs_completed(country: str = ""):
     try:
-        current_month_completed, change_percentage, delta = await tmrs_completed_service(facility_id)
+        current_month_completed, change_percentage, delta = await tmrs_completed_service(country)
         return JSONResponse(
             content={
                 "completed_current_month": current_month_completed,
@@ -41,11 +41,11 @@ async def tmrs_completed(facility_id: str = ""):
         return JSONResponse(content={"error": str("Internal Server Error")}, status_code=500)
 
 @router.get("/consumption")
-async def consumption(facility_id: str = "", item_name: str = ""):
+async def consumption(country: str = "", item_name: str = ""):
     cursor = connection.cursor()
     try:
-        query = "SELECT consumption FROM inventory WHERE facility_id = %s AND item_name = %s"
-        values = (facility_id, item_name)
+        query = "SELECT consumption FROM inventory JOIN facilities ON inventory.facility_id = facilities.id WHERE country = %s AND item_name = %s"
+        values = (country, item_name)
         cursor.execute(query, values)
         result = cursor.fetchone()
         return result
@@ -53,9 +53,9 @@ async def consumption(facility_id: str = "", item_name: str = ""):
         print(http_exception.detail)
 
 @router.get("/tmrsReceived")
-async def tmrs_received(facility_id: str = ""):
+async def tmrs_received(country: str = ""):
     try:
-        current_month_received, change_percentage, delta = await tmrs_received_service(facility_id)
+        current_month_received, change_percentage, delta = await tmrs_received_service(country)
         return JSONResponse(
             content={
                 "received_current_month": current_month_received,
@@ -74,9 +74,9 @@ async def tmrs_received(facility_id: str = ""):
 
 
 @router.get("/shipmentSpeed")
-async def shipment_speed(facility_id: str = ""):
+async def shipment_speed(country: str = ""):
     try:
-        current_month_speed, change_percentage, delta = await shipment_speed_service(facility_id)
+        current_month_speed, change_percentage, delta = await shipment_speed_service(country)
         return JSONResponse(
             content={
                 "shipment_speed": current_month_speed,
@@ -94,9 +94,9 @@ async def shipment_speed(facility_id: str = ""):
 
 
 @router.get("/delayedShipments")
-async def delayed_shipments(facility_id: str = ""):
+async def delayed_shipments(country: str = ""):
     try:
-        current_month_delayed_shipments,change_percentage, delta = await delayed_shipments_service(facility_id)
+        current_month_delayed_shipments,change_percentage, delta = await delayed_shipments_service(country)
         return JSONResponse(
             content={
                 "shipment_speed": current_month_delayed_shipments,
@@ -114,18 +114,18 @@ async def delayed_shipments(facility_id: str = ""):
 
     
 @router.get("/topRequestors")
-async def top_requestors(facility_id: str = ""):
+async def top_requestors(country: str = ""):
     cursor = connection.cursor()
     try:
         query = """
                 SELECT requestor, COUNT(requestor) as request_count
-                FROM tmrs
-                WHERE facility_id = %s
+                FROM tmrs JOIN facilities ON tmrs.facility_id = facilities.id
+                WHERE country = %s
                 GROUP BY requestor
                 ORDER BY request_count DESC
                 LIMIT 10;
                 """
-        cursor.execute(query, (facility_id,))
+        cursor.execute(query, (country,))
         result = cursor.fetchall()
         return result
     except HTTPException as http_exception:

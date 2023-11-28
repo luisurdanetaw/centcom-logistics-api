@@ -6,10 +6,12 @@ from controller.tmr_controller import find_all_tmrs
 
 from datetime import datetime, timedelta, date
 
+from repository.tmr_repository import find_all_tmrs_by_country
 
-async def tmrs_completed_service(facility_id: str = ""):
+
+async def tmrs_completed_service(country: str = ""):
     try:
-        tmrs = await find_all_tmrs(facility_id)
+        tmrs = await find_all_tmrs_by_country(country)
 
         # Get the current month and the first day of the current month
         current_month = datetime.now().month
@@ -29,9 +31,9 @@ async def tmrs_completed_service(facility_id: str = ""):
         raise http_exception
 
 
-async def tmrs_received_service(facility_id: str = ""):
+async def tmrs_received_service(country: str = ""):
     try:
-        tmrs = await find_all_tmrs(facility_id)
+        tmrs = await find_all_tmrs_by_country(country)
 
         # Get the current month and the first day of the current month
         current_month = datetime.now().month
@@ -56,9 +58,9 @@ async def tmrs_received_service(facility_id: str = ""):
         raise http_exception
 
 
-async def shipment_speed_service(facility_id: str = ""):
+async def shipment_speed_service(country: str = ""):
     try:
-        tmrs = await find_all_tmrs(facility_id)
+        tmrs = await find_all_tmrs_by_country(country)
 
         # Get the current month and the first day of the current month
         current_month = datetime.now().month
@@ -96,9 +98,9 @@ async def shipment_speed_service(facility_id: str = ""):
         raise http_exception
 
 
-async def delayed_shipments_service(facility_id: str = ""):
+async def delayed_shipments_service(country: str = ""):
     try:
-        tmrs = await find_all_tmrs(facility_id)
+        tmrs = await find_all_tmrs_by_country(country)
 
         # Get the current month and the first day of the current month
         current_month = datetime.now().month
