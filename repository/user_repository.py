@@ -19,7 +19,7 @@ async def find_facility_repository(name: str = ""):
             inventory = cursor.fetchall()
             facility['inventory'] = inventory
 
-            cursor.execute("SELECT * FROM tmrs WHERE facility_id = %s", (facility['id'],))
+            cursor.execute("SELECT * FROM tmrs WHERE facility_id = %s AND rdd IS NULL", (facility['id'],))
             active_tmrs = cursor.fetchall()
 
             facility['active_tmrs'] = len(active_tmrs)
@@ -28,10 +28,7 @@ async def find_facility_repository(name: str = ""):
             need_approval = cursor.fetchall()
             facility['need_approval_tmrs'] = len(need_approval)
 
-            cursor.execute("SELECT * FROM tmrs WHERE facility_id = %s AND rdd IS NULL", (facility['id'],))
-            awaiting_fulfillment_tmrs = cursor.fetchall()
-
-            facility['awaiting_fulfillment_tmrs'] = len(awaiting_fulfillment_tmrs)
+            facility['awaiting_fulfillment_tmrs'] = len(active_tmrs) - len(need_approval)
 
             connection.close()
             return facility
