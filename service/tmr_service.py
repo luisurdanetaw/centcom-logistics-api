@@ -4,6 +4,8 @@ from fastapi import HTTPException
 from model.tmr import TMR
 import time
 
+from repository.trends_repository import consumption_repository
+
 CACHE_TTL_SECONDS = 300
 tmr_cache = {}
 
@@ -55,3 +57,14 @@ async def update_tmr_service(id: str, details: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+async def consumption_service(country: str):
+    try:
+        if len(country) != 3:
+            raise HTTPException(status_code=400, detail='COUNTRY CODE NEEDS TO BE 3 FREAKING LETTERS')
+        else:
+            return await consumption_repository(country)
+    except HTTPException as http_exception:
+        raise http_exception
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

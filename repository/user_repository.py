@@ -35,6 +35,7 @@ async def find_facility_repository(name: str = ""):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 async def find_facilities_with_supplies_repository(supply: str = ""):
     try:
         connection = await create_db_connection()

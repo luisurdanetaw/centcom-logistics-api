@@ -4,6 +4,7 @@ from starlette.responses import JSONResponse
 import mysql.connector
 
 from repository.database import create_db_connection
+from service.tmr_service import consumption_service
 from service.trends_service import tmrs_completed_service, tmrs_received_service, shipment_speed_service, \
     delayed_shipments_service
 
@@ -42,16 +43,19 @@ async def tmrs_completed(country: str = ""):
         return JSONResponse(content={"error": str("Internal Server Error")}, status_code=500)
 
 @router.get("/consumption")
-async def consumption(country: str = "", item_name: str = ""):
-    cursor = connection.cursor()
+async def consumption(country: str = ""):
     try:
-        query = "SELECT consumption FROM inventory JOIN facilities ON inventory.facility_id = facilities.id WHERE country = %s AND item_name = %s"
-        values = (country, item_name)
-        cursor.execute(query, values)
-        result = cursor.fetchone()
-        return result
+        return await consumption_service(country)
     except HTTPException as http_exception:
         print(http_exception.detail)
+        if http_exception.status_code == 404:
+            return JSONResponse(content={"error": "No results found"}, status_code=404)
+        elif http_exception.status_code == 400:
+            return JSONResponse(content={"error": "COUNTRY CODE IS 3 FREAKING LETTERS GET IT RIGHT "}, status_code=400)
+        else:
+            return JSONResponse(content={"error": str("Internal Server error")}, status_code=500)
+    except Exception as e:
+        return JSONResponse(content={"error": str("Internal Server Error")}, status_code=500)
 
 @router.get("/tmrsReceived")
 async def tmrs_received(country: str = ""):
