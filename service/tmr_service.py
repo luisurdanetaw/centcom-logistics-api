@@ -1,5 +1,5 @@
 # tmr_service.py
-from repository.tmr_repository import find_all_tmrs_repository, create_tmr_repository
+from repository.tmr_repository import find_all_tmrs_repository, create_tmr_repository, update_tmr_repository
 from fastapi import HTTPException
 from model.tmr import TMR
 import time
@@ -41,6 +41,15 @@ async def create_tmr_service(tmr_data: TMR):
 
         created_tmr = await create_tmr_repository(tmr_data)
         return created_tmr
+    except HTTPException as http_exception:
+        raise http_exception
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+async def update_tmr_service(id: str, details: dict):
+    try:
+        return await update_tmr_repository(id, details)
     except HTTPException as http_exception:
         raise http_exception
     except Exception as e:

@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from model.updateRequest import updateRequest
 import mysql.connector
 from model.tmr import TMR
-from service.tmr_service import find_all_tmrs_service, create_tmr_service
+from service.tmr_service import find_all_tmrs_service, create_tmr_service, update_tmr_service
 
 # Define the database connection parameters
 host = "34.28.120.16"  # Replace with your database host
@@ -35,6 +35,18 @@ async def find_all_tmrs(facility_id: str = ""):
     except HTTPException as http_exception:
         if http_exception.status_code == 404:
             return JSONResponse(content={"error": "No results found"}, status_code=404)
+        else:
+            return JSONResponse(content={"error": str(http_exception.detail)}, status_code=500)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+@router.post("/updateTMR")
+async def update_tmr(id: str, details: dict):
+    try:
+        return await update_tmr_service(id, details)
+    except HTTPException as http_exception:
+        if http_exception.status_code == 404:
+            return JSONResponse(content={"error": "No tmr found with given ID"}, status_code=404)
         else:
             return JSONResponse(content={"error": str(http_exception.detail)}, status_code=500)
     except Exception as e:
@@ -139,21 +151,3 @@ async def update_inventory(updateRequest: updateRequest):
         print(e)
         return JSONResponse(content={"error": "Could not update inventory data"}, status_code=500)
 
-
-# @router.post("/add")
-# async def add_inventory(facility_id: str = ""):
-#     try:
-        
-        
-#     except Exception as e:
-#         print(e)
-#         return JSONResponse(content={"error": "Could not add inventory data"}, status_code=500)
-
-# @router.post("/remove")
-# async def remove_inventory(facility_id: str = "":)
-#     try:
-        
-        
-#     except Exception as e:
-#         print(e)
-#         return JSONResponse(content={"error": "Could not remove inventory data"}, status_code=500)

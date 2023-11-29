@@ -35,5 +35,29 @@ async def create_tmr_repository(tmr_data: TMR):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+async def update_tmr_repository(id: str, details: dict):
 
-        
+    try:
+        connection = await create_db_connection()
+        set_clause = ', '.join([f"{key} = %s" for key in details.keys()])
+        values = list(details.values())
+
+        # Execute the UPDATE statement
+        update_query = f"UPDATE tmrs SET {set_clause} WHERE {id} = %s"
+
+        with connection.cursor(dictionary=True) as cursor:
+            cursor.execute(update_query, values + [id])
+            connection.commit()
+
+            # Fetch the updated row
+            select_query = f"SELECT * FROM tmrs WHERE {id} = %s"
+            cursor.execute(select_query, [id])
+            updated_row = cursor.fetchone()
+            connection.close()
+            return updated_row
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=e)
+
+
