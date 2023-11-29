@@ -1,0 +1,15 @@
+__pycache__/main.cpython-39.pyc
+controller/__pycache__/tmr_controller.cpython-39.pyc
+controller/__pycache__/trends_controller.cpython-39.pyc
+controller/__pycache__/user_controller.cpython-39.pyc
+model/__pycache__/tmr.cpython-39.pyc
+model/__pycache__/updateRequest.cpython-39.pyc
+model/__pycache__/user.cpython-39.pyc
+repository/__pycache__/database.cpython-39.pyc
+repository/__pycache__/dummy_db.cpython-39.pyc
+repository/__pycache__/tmr_repository.cpython-39.pyc
+repository/__pycache__/trends_repository.cpython-39.pyc
+repository/__pycache__/user_repository.cpython-39.pyc
+service/__pycache__/tmr_service.cpython-39.pyc
+service/__pycache__/trends_service.cpython-39.pyc
+service/__pycache__/user_service.cpython-39.pyc
