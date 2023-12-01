@@ -1,16 +1,33 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
 from starlette.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, Depends, HTTPException
-from mysql.connector import connect, Error
-from fastapi import FastAPI, Depends, HTTPException
-from mysql.connector import connect, Error
+from controller import user_controller, tmr_controller, trends_controller
+import mysql.connector
 
-from controller import user_controller
+
+# Define the database connection parameters
+host = "34.28.120.16"  # Replace with your database host
+user = "root"  # Replace with your database username
+password = "centcom2023!"  # Replace with your database password
+database = "usf-sr-project-centcom"  # Replace with your database name
+
+connection = mysql.connector.connect(
+host=host,
+user=user,
+password=password,
+database=database
+)
+
+if connection.is_connected():
+    print("Connected to the database")
+    cursor = connection.cursor()
+else:
+    print("Failed to connect to the database")
 
 app = FastAPI()
 
 origins = [
     "http://localhost:3000",  # Replace with the origin of your frontend (e.g., http://yourfrontend.com)
+    "http://127.0.0.1:3000"
 ]
 
 app.add_middleware(
@@ -26,4 +43,14 @@ app.add_middleware(
 def read_root():
     return {"message": "CENTCOM Logistics API"}
 
+@app.get("/test")
+def read_root():
+    query = "SELECT * FROM users"
+    cursor.execute(query)
+    for row in cursor.fetchall():
+        print(row)
+    return {"message": "CENTCOM Logistics API"}
+
 app.include_router(user_controller.router, prefix="/user")
+app.include_router(tmr_controller.router, prefix="/tmr")
+app.include_router(trends_controller.router, prefix="/trends")
